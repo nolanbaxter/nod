@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 740" width="1000" height="740" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <rect width="1000" height="740" fill="#ffffff"/>
+  <text x="30" y="42" font-size="24" font-weight="700" fill="#222">Nod wiring</text>
+  <text x="30" y="66" font-size="13" fill="#555">XIAO ESP32-S3, top view, USB-C at the top. Keys as seen from the front.</text>
+
+  <!-- ===== Key switches ===== -->
+  <g font-size="13" fill="#222">
+    <rect x="130" y="140" width="70" height="70" rx="6" fill="#fafafa" stroke="#222" stroke-width="2"/>
+    <text x="165" y="130" text-anchor="middle" font-weight="700">NO (Esc)</text>
+    <rect x="130" y="240" width="70" height="70" rx="6" fill="#fafafa" stroke="#222" stroke-width="2"/>
+    <text x="165" y="230" text-anchor="middle" font-weight="700">ALWAYS (2)</text>
+    <rect x="130" y="340" width="70" height="70" rx="6" fill="#fafafa" stroke="#222" stroke-width="2"/>
+    <text x="165" y="330" text-anchor="middle" font-weight="700">YES (1)</text>
+    <text x="165" y="440" text-anchor="middle" font-size="12" fill="#555">MX switches, 2 pins each</text>
+    <text x="165" y="456" text-anchor="middle" font-size="12" fill="#555">either pin can be either wire</text>
+  </g>
+
+  <!-- signal wires -->
+  <g fill="none" stroke-width="3" stroke-linejoin="round">
+    <path d="M200,160 H290 V175 H380" stroke="#e65100"/>
+    <path d="M200,260 H310 V220 H380" stroke="#2e7d32"/>
+    <path d="M200,360 H330 V310 H380" stroke="#1565c0"/>
+  </g>
+  <!-- ground: second pin of every switch, chained, to GND -->
+  <path d="M130,190 H90 M130,290 H90 M130,390 H90 M90,390 V85 H640 V220 H600" fill="none" stroke="#222" stroke-width="3" stroke-linejoin="round"/>
+  <text x="96" y="100" font-size="12" fill="#222">GND (all three chained)</text>
+  <g fill="#222"><circle cx="200" cy="160" r="4"/><circle cx="200" cy="260" r="4"/><circle cx="200" cy="360" r="4"/>
+    <circle cx="130" cy="190" r="4"/><circle cx="130" cy="290" r="4"/><circle cx="130" cy="390" r="4"/></g>
+
+  <!-- ===== XIAO ===== -->
+  <rect x="460" y="115" width="60" height="27" rx="4" fill="#b0b0b0" stroke="#444" stroke-width="1.5"/>
+  <text x="490" y="133" text-anchor="middle" font-size="11" fill="#222">USB-C</text>
+  <rect x="380" y="140" width="220" height="340" rx="10" fill="#2e7d32" stroke="#1b5e20" stroke-width="2"/>
+  <text x="490" y="470" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">XIAO ESP32-S3</text>
+  <g font-size="12" fill="#fff">
+    <!-- left column, top to bottom -->
+    <text x="394" y="179" font-weight="700">D0 · GPIO1</text>
+    <text x="394" y="224" font-weight="700">D1 · GPIO2</text>
+    <text x="394" y="269" fill="#c8e6c9">D2 (don't use)</text>
+    <text x="394" y="314" font-weight="700">D3 · GPIO4</text>
+    <text x="394" y="359" fill="#c8e6c9">D4</text>
+    <text x="394" y="404" fill="#c8e6c9">D5</text>
+    <text x="394" y="449" fill="#c8e6c9">D6</text>
+    <!-- right column, top to bottom -->
+    <text x="586" y="179" text-anchor="end" fill="#c8e6c9">5V</text>
+    <text x="586" y="224" text-anchor="end" font-weight="700">GND</text>
+    <text x="586" y="269" text-anchor="end" fill="#c8e6c9">3V3</text>
+    <text x="586" y="314" text-anchor="end" fill="#c8e6c9">D10</text>
+    <text x="586" y="359" text-anchor="end" fill="#c8e6c9">D9</text>
+    <text x="586" y="404" text-anchor="end" fill="#c8e6c9">D8</text>
+    <text x="586" y="449" text-anchor="end" fill="#c8e6c9">D7</text>
+  </g>
+  <g fill="#f5d76e" stroke="#8d6e00" stroke-width="1.5">
+    <circle cx="380" cy="175" r="6"/><circle cx="380" cy="220" r="6"/><circle cx="380" cy="265" r="6" fill="#999"/><circle cx="380" cy="310" r="6"/>
+    <circle cx="380" cy="355" r="6" fill="#999"/><circle cx="380" cy="400" r="6" fill="#999"/><circle cx="380" cy="445" r="6" fill="#999"/>
+    <circle cx="600" cy="175" r="6" fill="#999"/><circle cx="600" cy="220" r="6"/><circle cx="600" cy="265" r="6" fill="#999"/>
+    <circle cx="600" cy="310" r="6" fill="#999"/><circle cx="600" cy="355" r="6" fill="#999"/><circle cx="600" cy="400" r="6" fill="#999"/><circle cx="600" cy="445" r="6" fill="#999"/>
+  </g>
+
+  <!-- ===== Battery + power switch (underside pads) ===== -->
+  <rect x="400" y="508" width="180" height="72" rx="6" fill="none" stroke="#2e7d32" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="490" y="526" text-anchor="middle" font-size="12" fill="#2e7d32">board underside</text>
+  <g font-size="12" font-weight="700">
+    <circle cx="440" cy="555" r="8" fill="#f5d76e" stroke="#8d6e00" stroke-width="1.5"/>
+    <text x="440" y="596" text-anchor="middle" fill="#222">BAT−</text>
+    <circle cx="540" cy="555" r="8" fill="#f5d76e" stroke="#8d6e00" stroke-width="1.5"/>
+    <text x="540" y="596" text-anchor="middle" fill="#222">BAT+</text>
+  </g>
+
+  <rect x="640" y="600" width="80" height="30" rx="4" fill="#424242"/>
+  <rect x="668" y="606" width="14" height="18" fill="#9e9e9e"/>
+  <text x="680" y="652" text-anchor="middle" font-size="13" font-weight="700" fill="#222">Power switch</text>
+  <text x="680" y="668" text-anchor="middle" font-size="11" fill="#777">(third pin unused)</text>
+  <g fill="#222"><circle cx="655" cy="600" r="4"/><circle cx="680" cy="600" r="4"/><circle cx="705" cy="600" r="4" fill="#bbb"/></g>
+
+  <rect x="380" y="650" width="180" height="50" rx="8" fill="#607d8b"/>
+  <text x="470" y="672" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">LiPo 502030</text>
+  <text x="470" y="689" text-anchor="middle" font-size="11" fill="#eceff1">3.7 V, 250 mAh</text>
+
+  <g fill="none" stroke-width="3" stroke-linejoin="round">
+    <path d="M560,675 H760 V585 H680 V600" stroke="#d32f2f"/>
+    <path d="M655,600 V540 H540 V547" stroke="#d32f2f"/>
+    <path d="M380,675 H350 V555 H432" stroke="#222"/>
+  </g>
+  <text x="765" y="640" font-size="12" fill="#d32f2f">red (+) → middle pin</text>
+  <text x="600" y="534" font-size="12" fill="#d32f2f">outer pin → BAT+</text>
+  <text x="255" y="620" font-size="12" fill="#222">black (−) → BAT−</text>
+
+  <!-- ===== Notes ===== -->
+  <rect x="680" y="120" width="290" height="400" rx="10" fill="#f7f7f7" stroke="#ddd"/>
+  <g font-size="13" fill="#222">
+    <text x="698" y="148" font-weight="700" font-size="15">Notes</text>
+    <text x="698" y="176">• No resistors or diodes. The firmware</text>
+    <text x="710" y="194">turns on the chip's built-in pull-ups.</text>
+    <text x="698" y="220">• Skip D2: it's a boot pin.</text>
+    <text x="698" y="246">• The power switch sits in the battery's</text>
+    <text x="710" y="264">+ lead. It must be ON to charge.</text>
+    <text x="698" y="290">• Battery: cut and solder one lead at a</text>
+    <text x="710" y="308">time, heat-shrink each joint before the</text>
+    <text x="710" y="326">next. Never let the two leads touch.</text>
+    <text x="698" y="352">• Solder the battery last.</text>
+    <text x="698" y="378">• Antenna: press its snap straight down</text>
+    <text x="710" y="396">onto the board's U.FL socket.</text>
+    <text x="698" y="422">• BAT+/BAT− and U.FL positions shown</text>
+    <text x="710" y="440">here are schematic: go by the labels</text>
+    <text x="710" y="458">printed on the board.</text>
+    <text x="698" y="484">• Wire: 28–30 AWG silicone. Leave slack</text>
+    <text x="710" y="502">so the lid can come off.</text>
+  </g>
+</svg>
