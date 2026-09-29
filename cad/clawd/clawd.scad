@@ -22,7 +22,7 @@ module eyes() for (c = [2, 10]) box([-W/2 + c*px_w, -0.01, 2*px_h], [px_w, eye_d
 module body_add() for (s = [-1, 1]) cbox([s > 0 ? W/2 - sink : -W/2 - 2*px_w, 0, px_h], [2*px_w + sink, depth, px_h]);
 // "Nod" engraved on the back wall above the power switch (above the port is the thin LED window).
 // rotate: text stands up on the back face and reads correctly from behind; it cuts label_depth in.
-module back_logo() translate([sw_lx, depth - label_depth, sw_z + 5]) rotate([90, 0, 180])
+module back_logo() translate([sw_lx, depth - label_depth, sw_z + sw_pocket.y/2 + 2.5]) rotate([90, 0, 180])
   linear_extrude(label_depth + 0.01) text("Nod", size = logo_size, halign = "center", valign = "center", font = label_font);
 module body_cut() { eyes(); back_logo(); }
 module lid_add() for (c = [2, 4, 8, 10]) cbox([-W/2 + c*px_w, 0, -px_h], [px_w, depth, px_h + sink], bot = false);

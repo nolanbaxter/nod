@@ -45,6 +45,9 @@ sw_h = 3.5;
 knob_l = 2.0;         // slider cross-section
 knob_w = 1.5;
 knob_travel = 2.0;
+knob_h = 3;           // slider length past the switch face: G3 = 3 mm
+sw_pocket = [10, 7];  // finger pocket around the slot on the outside (along the wall, height)
+sw_pocket_wall = 1.0; // wall left at the pocket floor, so the 3 mm slider stands 2 mm proud
 
 /* [Magnets] 6 x 2 mm discs */
 mag_d = 6;            // diameter
@@ -179,6 +182,7 @@ module body() difference() {
     // power switch slider slot
     box([sw_lx - (knob_l + knob_travel)/2 - tol, -wall - 1, sw_z - knob_w/2 - tol],
         [knob_l + knob_travel + 2*tol, wall + 2, knob_w + 2*tol]);
+    box([sw_lx - sw_pocket.x/2, -wall + sw_pocket_wall, sw_z - sw_pocket.y/2], [sw_pocket.x, wall, sw_pocket.y]);
     // LED window: wall thinned to 0.6 just above the plug recess
     box([-6, -wall - 0.01, led_z0], [12, wall - 0.6, led_top - led_z0]);
   }
@@ -266,7 +270,7 @@ module antenna_dummy() color("#212121") box([-ant_l/2, depth - wall - 0.3, ant_z
 // slide switch lying against the port wall: slider out through the wall, pins pointing inward
 module slide_dummy() color(two_tone ? accent_col : "#424242") at_port() translate([sw_lx, -wall, sw_z]) {
   box([-sw_l/2, -sw_h, -sw_w/2], [sw_l, sw_h, sw_w]);
-  box([-knob_l/2 - knob_travel/2, 0, -knob_w/2], [knob_l, wall + 1, knob_w]);  // slider, one end of travel
+  box([-knob_l/2 - knob_travel/2, 0, -knob_w/2], [knob_l, knob_h, knob_w]);  // slider, one end of travel
   for (dx = [-2.54, 0, 2.54]) translate([dx, -sw_h, 0]) rotate([90, 0, 0]) cylinder(d = 0.8, h = 3);
 }
 module magnets_dummy() color("#CFD8DC") for (p = mag_xy, z = [mag_z - mag_h, mag_z])
