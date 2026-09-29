@@ -10,7 +10,10 @@ void bleBegin(); bool bleUp(); void bleSend(uint8_t code);
 // Switch leg -> GPIO, other leg -> GND. All RTC-capable so any key wakes from deep sleep; D2 (GPIO3, strapping) skipped.
 // Power is a slide switch in the battery lead.
 constexpr uint8_t PIN[3] = {1, 2, 4};              // D0, D1, D3
-constexpr uint8_t CODE[3] = {0xB1, '2', '1'};      // left to right: No (Esc), Always, Yes -- matches the desktop app
+// Left to right: No = Esc, Always = '2', Yes = Enter. Tested in the Claude desktop app and matches the
+// terminal CLI, so one keymap works in both. (Number keys pick by position and the order differs between
+// the two: '1' is Yes in the terminal but the leftmost button, Deny, in the desktop app.)
+constexpr uint8_t CODE[3] = {0xB1, '2', 0xB0};     // 0xB1 = Esc, 0xB0 = Enter in both keyboard libraries
 constexpr int LED = 21;                            // XIAO user LED, active low
 
 Keys keys;

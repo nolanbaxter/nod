@@ -1,11 +1,9 @@
-# Nod
+![Nod](docs/banner.png)
 
 A three-key desk pad for answering coding-agent permission prompts: **No**, **Always**, **Yes**.
 Built for [Claude Code](https://docs.anthropic.com/en/docs/claude-code)'s numbered prompts, but
 the keys are one line to remap. Works over USB-C or Bluetooth, runs on a small LiPo, and sleeps
 when you're not using it.
-
-![Nod, upright](cad/preview/upright.png)
 
 > **Status:** designed and compiled, not yet built. The firmware builds and its logic is unit
 > tested; the case passes a collision check against stand-ins for every part. Values marked
@@ -17,9 +15,19 @@ Not affiliated with or endorsed by Anthropic.
 
 | Key (left to right) | Sends | In a Claude Code prompt |
 |---|---|---|
-| NO | `Esc` | Deny (works in 2- and 3-option prompts) |
-| ALWAYS | `2` | Yes, and don't ask again |
-| YES | `1` | Yes |
+| NO | `Esc` | Deny |
+| ALWAYS | `2` | Yes, and don't ask again (for file edits: allow all edits this session) |
+| YES | `Enter` | Yes |
+
+The same keys work in the terminal and in the Claude desktop app. Number keys don't: they pick by
+position, and `1` is Yes in the terminal but Deny in the desktop app. In the desktop app the keys
+go to the focused window, so leave the cursor in the message box, not on the prompt card.
+
+Prompts with only two options have no "always": there, ALWAYS (`2`) picks the second option,
+which is Confirm in the desktop app and No in the terminal. NO and YES behave the same everywhere.
+
+With no prompt open, the keys act like normal keys: `Esc` interrupts Claude, `2` types a 2,
+`Enter` sends whatever is in the message box.
 
 Every key fires on press, once. To remap, edit `CODE[]` in [`src/main.cpp`](src/main.cpp) and the
 `labels` in [`cad/case.scad`](cad/case.scad).

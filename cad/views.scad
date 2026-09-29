@@ -1,4 +1,4 @@
-// Extra render views. Run with -D view="port" | "lying".
+// Extra render views. Run with -D view="port" | "lying" | "banner".
 include <case.scad>
 part = "none";
 view = "port";
@@ -10,3 +10,4 @@ if (view == "port") {  // right side: USB port, LED window, power switch
   slide_dummy();
 }
 if (view == "lying") rotate([-90, 0, 0]) assembly();  // on its back
+if (view == "banner") rotate([90, 0, 0]) assembly();  // on its front: keys face the camera, labels read upright
