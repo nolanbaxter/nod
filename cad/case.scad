@@ -38,7 +38,7 @@ bat_l = 32;
 bat_t = 5.3;
 bat_slack = 1;        // LiPos swell
 
-/* [Power switch] SS12D00G3-style mini slide switch, measure */
+/* [Power switch] SS12D00-G3 mini slide switch (3 mm slider), measure */
 sw_l = 8.6;           // body length (slide direction)
 sw_w = 3.6;
 sw_h = 3.5;

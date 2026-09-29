@@ -50,7 +50,7 @@ Every key fires on press, once. To remap, edit `CODE[]` in [`src/main.cpp`](src/
 | 2.4 GHz FPC antenna, U.FL / IPEX-1 | The XIAO has no onboard antenna. ~50 × 14 mm fits the case |
 | 3 × MX-style switches | 3-pin or 5-pin, plate-mount. Any feel |
 | 502030 LiPo, 3.7 V ~250 mAh, **with protection circuit** | Stands on edge inside |
-| SS12D00G3-style mini slide switch | Power |
+| SS12D00**G3** mini slide switch | Power. G3 = 3 mm slider; the case has a finger pocket sized for it. Not SS12D10/SS12F44 "5 mm knob" parts: their bodies are bigger |
 | 8 × 6 × 2 mm disc magnets | Hold the lid on |
 | 28–30 AWG silicone wire, heat-shrink, Kapton tape, gel superglue | |
 | PLA | Case, plate, keycaps; a second colour for labels is optional |
