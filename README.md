@@ -79,6 +79,10 @@ The switch plate is a separate part so it prints perfectly flat; it drops into t
 gets a dab of glue. Glue the magnets in pairs: stack each pair first and mark the touching faces,
 so the lid attracts instead of repelling.
 
+Keycap labels use [Cascadia Code](https://github.com/microsoft/cascadia-code) Bold (free). The STLs
+already have it baked in; to re-export them, install the font first, or OpenSCAD silently swaps in
+a default one.
+
 Useful knobs at the top of `case.scad`: `sw_hole` (switch fit), `cross_l`/`cross_w` (keycap fit),
 `cap_proud` (how far keys stick out), `chamfer` (0 for square edges), and every `measure` value.
 

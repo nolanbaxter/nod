@@ -68,8 +68,14 @@ cross_l = 4.2;        // tune for stem fit
 cross_w = 1.35;
 cross_depth = 4;
 labels = ["NO", "ALWAYS", "YES"];   // left to right, matches src/main.cpp CODE[]
-label_size = [5, 2.9, 5];
-label_depth = 0.6;
+label_size = [5, 3.1, 5];
+label_font = "Cascadia Code:style=Bold";   // free, github.com/microsoft/cascadia-code; OpenSCAD silently falls back if missing
+label_depth = 1.0;   // engraving depth for key labels and the logo
+
+/* [Logo] engraved on the top face, behind the keys */
+logo = "Nod";
+logo_size = 3.5;
+logo_side = "left";   // [left, right]
 
 /* [Fit] */
 tol = 0.2;
@@ -121,6 +127,14 @@ module cbox(p, s, bot = true, top = true, c = chamfer) {
   }
 }
 
+// logo sits in the strip between the key well and the back edge, flush with the well's left or right edge
+module logo_shape() {
+  right = logo_side == "right";
+  translate([right ? well.x/2 : -well.x/2, depth - (depth/2 - well.y/2)/2, H - label_depth])
+    linear_extrude(label_depth + 0.01)
+      text(logo, size = logo_size, halign = right ? "right" : "left", valign = "center", font = label_font);
+}
+
 module body() difference() {
   union() {
     difference() {
@@ -139,6 +153,7 @@ module body() difference() {
   // key well: keycaps sit in it; the separate plate drops in and rests on a ledge
   box([-well.x/2, depth/2 - well.y/2, plate_top - plate], [well.x, well.y, H]);
   box([-well.x/2 + ledge, depth/2 - well.y/2 + ledge, ceil_z - 1], [well.x - 2*ledge, well.y - 2*ledge, rim + 1.01]);
+  logo_shape();
   for (p = mag_xy) translate([p.x, p.y, mag_z - 1]) cylinder(d = mag_pd, h = mag_h + 1);
   // antenna sticker: 0.4 mm locating recess on the inside of the back wall
   box([-ant_l/2 - 0.5, depth - wall - 0.01, ant_z], [ant_l + 1, 0.41, ant_w + 1]);
@@ -194,7 +209,7 @@ module lid() difference() {
 }
 
 module label(i) linear_extrude(label_depth + 0.01)
-  text(labels[i], size = label_size[i], halign = "center", valign = "center", font = "Liberation Sans:style=Bold");
+  text(labels[i], size = label_size[i], halign = "center", valign = "center", font = label_font);
 
 module keycap(i) difference() {
   union() {
@@ -224,13 +239,13 @@ bat_h = 20.5;         // battery stands on its long edge
 
 module xiao_dummy() at_port() {
   color("#2E7D32") box([-xiao_w/2, xl0, lid_t + xiao_lift], [xiao_w, xiao_l, pcb_t]);
-  color("#B0B0B0") box([-usb_w/2, -wall - 7, port_z - usb_h/2], [usb_w, 7 + usb_over, usb_h]);
+  color(two_tone ? accent_col : "#B0B0B0") box([-usb_w/2, -wall - 7, port_z - usb_h/2], [usb_w, 7 + usb_over, usb_h]);
   color("#9E9E9E") box([-6, xl0 + 3, lid_t + xiao_lift + pcb_t], [12, 11, 2.2]);  // shield can
 }
 module battery_dummy() color("#607D8B") box([-bat_l/2, wall + tol, lid_t], [bat_l, bat_t, bat_h]);
 module antenna_dummy() color("#212121") box([-ant_l/2, depth - wall - 0.3, ant_z + 0.5], [ant_l, 0.3, ant_w]);
 // slide switch lying against the right wall: slider out through the wall, pins pointing inward
-module slide_dummy() color("#424242") at_port() translate([0, -wall, sw_z]) {
+module slide_dummy() color(two_tone ? accent_col : "#424242") at_port() translate([0, -wall, sw_z]) {
   box([-sw_l/2, -sw_h, -sw_w/2], [sw_l, sw_h, sw_w]);
   box([-knob_l/2 - knob_travel/2, 0, -knob_w/2], [knob_l, wall + 1, knob_w]);  // slider, one end of travel
   for (dx = [-2.54, 0, 2.54]) translate([dx, -sw_h, 0]) rotate([90, 0, 0]) cylinder(d = 0.8, h = 3);
@@ -246,8 +261,8 @@ module switches_dummy() color("#FFF59D") for (i = [-1:1]) translate([i*pitch, de
   for (r = [0, 90]) rotate(r) box([-2.05, -0.65, 6.6], [4.1, 1.3, 5]);
 }
 module keycaps_placed() for (i = [0:2]) translate([(i - 1) * pitch, depth/2, plate_top + cap_rest]) {
-  color("#EEE") keycap(i);
-  color("black") label_at(i);
+  color(accent_col) keycap(i);
+  if (fill_labels) color("black") label_at(i);
 }
 
 module thing(n) {
@@ -265,11 +280,15 @@ module thing(n) {
 
 // all: whole build. xray = hide the body to see inside; cut = section at x=0; explode = pull lid/caps apart
 xray = false;
+fill_labels = false;  // preview only: show keycap labels filled (labels.stl) or as plain engraving
+two_tone = false;     // preview only: every visible part in the body or keycap colour (banner)
+body_col = "#DA7756";
+accent_col = "#EEE";
 cut = false;
 explode = 0;
 module assembly() {
-  if (!xray) color("#DA7756") body();
-  translate([0, 0, -explode]) { color("#C86A4C") lid(); xiao_dummy(); battery_dummy(); }
+  if (!xray) color(body_col) body();
+  translate([0, 0, -explode]) { color(two_tone ? body_col : "#C86A4C") lid(); xiao_dummy(); battery_dummy(); }
   slide_dummy();
   magnets_dummy();
   antenna_dummy();
