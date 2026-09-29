@@ -1,0 +1,14 @@
+Clawd case model (everything in cad/clawd/)
+Copyright (c) 2026 Nolan Baxter
+
+Unofficial, noncommercial fan-made 3D recreation of Clawd, the Claude Code mascot.
+Created independently from scratch as a personal modeling project. This work is not affiliated
+with, authorized by, sponsored by, or endorsed by Anthropic or Claude. "Anthropic," "Claude," and
+"Clawd" are referenced only to identify the inspiration/subject of this fan work.
+No commercial use intended.
+
+This work is licensed under the Creative Commons Attribution-NonCommercial 4.0 International
+License (CC BY-NC 4.0). To view a copy of this license, visit
+https://creativecommons.org/licenses/by-nc/4.0/
+
+It builds on ../case.scad, which is MIT licensed (see the LICENSE file at the repository root).

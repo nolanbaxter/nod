@@ -97,12 +97,25 @@ well = [2*pitch + cap + 2*well_gap, cap + 2*well_gap];   // key well footprint, 
 plate_top = H - (cap_rest + cap_h - cap_proud);          // switch plate sits at the bottom of the well
 ceil_z = plate_top - plate - rim;                        // underside of the solid top block
 
-// Port cluster (USB, LED window, power switch, XIAO pocket) on the right side wall, modelled in a
-// local frame: x along the wall, y = 0 at its outer face and negative going inside.
-// The switch sits above the port: the wall is too short for both side by side.
+// Port cluster (USB, LED window, power switch, XIAO pocket), modelled in a local frame:
+// x along the wall, y = 0 at its outer face and negative going inside.
+// Nod: right side wall, switch above the port (that wall is too short for both side by side).
 xl0 = -wall - xiao_l;                          // PCB inner edge; the USB edge butts the wall
+port_side = "right";                           // right | back
+sw_lx = 0;                                     // power switch position along the port wall
 sw_z = led_top + 2 + sw_w/2;
-module at_port() translate([W/2, depth/2, 0]) rotate(-90) children();
+rib_z0 = sw_z - sw_w/2 - 1;                    // bottom of the switch guide ribs
+module at_port() {
+  if (port_side == "back") translate([0, depth, 0]) children();
+  else translate([W/2, depth/2, 0]) rotate(-90) children();
+}
+
+// Hooks for variants built on this file (see cad/clawd/clawd.scad); empty for Nod.
+lid_lift = 0;                                  // raise the exported lid (e.g. for legs)
+module body_add() {}
+module body_cut() {}
+module lid_add() {}
+module preview_add() {}
 
 assert(port_z - plug_h/2 > lid_t, "cable overmold would hit the lid; raise xiao_lift");
 assert(ant_z > led_top && ant_z + ant_w + 1 < ceil_z, "antenna overlaps LED window or the top block; move ant_z");
@@ -142,8 +155,9 @@ module body() difference() {
       box([-W/2 + wall, wall, lid_t - 1], [W - 2*wall, depth - 2*wall, ceil_z - lid_t + 1]);
     }
     // power switch guide ribs either side of the switch body (glue it in between)
-    at_port() for (s = [-1, 1]) box([s*(sw_l/2 + tol) - (s < 0 ? 1.2 : 0), -wall - sw_h, sw_z - sw_w/2 - 1],
-                                    [1.2, sw_h + 0.01, sw_w + 2.5]);
+    at_port() for (s = [-1, 1]) box([sw_lx + s*(sw_l/2 + tol) - (s < 0 ? 1.2 : 0), -wall - sw_h, rib_z0],
+                                    [1.2, sw_h + 0.01, sw_z + sw_w/2 + 1.5 - rib_z0]);
+    body_add();
     // corner magnet bosses fused to the walls; 45° cone on top so they print plate-down
     for (p = mag_xy) translate([p.x, p.y, mag_z]) {
       cylinder(d = boss_d, h = mag_h + 0.6);
@@ -154,6 +168,7 @@ module body() difference() {
   box([-well.x/2, depth/2 - well.y/2, plate_top - plate], [well.x, well.y, H]);
   box([-well.x/2 + ledge, depth/2 - well.y/2 + ledge, ceil_z - 1], [well.x - 2*ledge, well.y - 2*ledge, rim + 1.01]);
   logo_shape();
+  body_cut();
   for (p = mag_xy) translate([p.x, p.y, mag_z - 1]) cylinder(d = mag_pd, h = mag_h + 1);
   // antenna sticker: 0.4 mm locating recess on the inside of the back wall
   box([-ant_l/2 - 0.5, depth - wall - 0.01, ant_z], [ant_l + 1, 0.41, ant_w + 1]);
@@ -162,7 +177,7 @@ module body() difference() {
     box([-usb_w/2 - tol, -wall - 1, lid_t - 1], [usb_w + 2*tol, wall + 2, port_z + usb_h/2 + tol - lid_t + 1]);
     box([-plug_w/2, -wall + usb_over, port_z - plug_h/2], [plug_w, wall, plug_h]);
     // power switch slider slot
-    box([-(knob_l + knob_travel)/2 - tol, -wall - 1, sw_z - knob_w/2 - tol],
+    box([sw_lx - (knob_l + knob_travel)/2 - tol, -wall - 1, sw_z - knob_w/2 - tol],
         [knob_l + knob_travel + 2*tol, wall + 2, knob_w + 2*tol]);
     // LED window: wall thinned to 0.6 just above the plug recess
     box([-6, -wall - 0.01, led_z0], [12, wall - 0.6, led_top - led_z0]);
@@ -178,6 +193,7 @@ module plate() difference() {
 module lid() difference() {
   union() {
     cbox([-W/2, 0, 0], [W, depth, lid_t], top = false);
+    lid_add();
     at_port() {
       // tab filling the USB notch under the receptacle
       box([-usb_w/2, -wall, lid_t - 0.01], [usb_w, wall, port_z - usb_h/2 - tol - lid_t]);
@@ -202,7 +218,10 @@ module lid() difference() {
       box([-cav.x/2 + tol + 1.2, wall + tol + 1.2, 0], [cav.x - 2*tol - 2.4, cav.y - 2*tol - 2.4, 9]);
       for (p = mag_xy) translate([p.x, p.y, 0]) cube([boss_d + 2, boss_d + 2, 20], center = true);
       box([-bat_l/2 - 2.5, 0, 0], [bat_l + 5, depth/2, 9]);
-      at_port() box([-xiao_w/2 - tol - 2, -25, 0], [xiao_w + 2*tol + 4, 30, 9]);
+      at_port() {
+        box([-xiao_w/2 - tol - 2, -25, 0], [xiao_w + 2*tol + 4, 30, 9]);
+        box([sw_lx - sw_l/2 - 3, -25, 0], [sw_l + 6, 30, 9]);  // power switch, when it sits low
+      }
     }
   }
   for (p = mag_xy) translate([p.x, p.y, mag_z - mag_h]) cylinder(d = mag_pd, h = mag_h + 1);
@@ -224,12 +243,12 @@ module keycap(i) difference() {
 }
 module label_at(i) translate([0, 0, cap_h - label_depth]) label(i);
 
-// print orientations: body plate-down, caps top-down, lid flat
+// print orientations: body plate-down, caps top-down, lid flat (or on its legs)
 module flip(h) translate([0, depth, h]) rotate([180, 0, 0]) children();
 module caps_row() for (i = [0:2]) translate([(i - 1) * (cap + 4), 0, cap_h]) rotate([180, 0, 0]) children(i);
 
 if (part == "body") flip(H) body();
-if (part == "lid") lid();
+if (part == "lid") translate([0, 0, lid_lift]) lid();
 if (part == "plate") translate([0, 0, plate - plate_top]) plate();
 if (part == "keycaps") caps_row() { keycap(0); keycap(1); keycap(2); }
 if (part == "labels") caps_row() { label_at(0); label_at(1); label_at(2); }
@@ -244,8 +263,8 @@ module xiao_dummy() at_port() {
 }
 module battery_dummy() color("#607D8B") box([-bat_l/2, wall + tol, lid_t], [bat_l, bat_t, bat_h]);
 module antenna_dummy() color("#212121") box([-ant_l/2, depth - wall - 0.3, ant_z + 0.5], [ant_l, 0.3, ant_w]);
-// slide switch lying against the right wall: slider out through the wall, pins pointing inward
-module slide_dummy() color(two_tone ? accent_col : "#424242") at_port() translate([0, -wall, sw_z]) {
+// slide switch lying against the port wall: slider out through the wall, pins pointing inward
+module slide_dummy() color(two_tone ? accent_col : "#424242") at_port() translate([sw_lx, -wall, sw_z]) {
   box([-sw_l/2, -sw_h, -sw_w/2], [sw_l, sw_h, sw_w]);
   box([-knob_l/2 - knob_travel/2, 0, -knob_w/2], [knob_l, wall + 1, knob_w]);  // slider, one end of travel
   for (dx = [-2.54, 0, 2.54]) translate([dx, -sw_h, 0]) rotate([90, 0, 0]) cylinder(d = 0.8, h = 3);
@@ -287,7 +306,7 @@ accent_col = "#EEE";
 cut = false;
 explode = 0;
 module assembly() {
-  if (!xray) color(body_col) body();
+  if (!xray) { color(body_col) body(); preview_add(); }
   translate([0, 0, -explode]) { color(two_tone ? body_col : "#C86A4C") lid(); xiao_dummy(); battery_dummy(); }
   slide_dummy();
   magnets_dummy();

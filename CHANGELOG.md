@@ -13,3 +13,6 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning: [S
   port, power switch, and LED window; bevelled and square STLs; a collision check against
   stand-ins for every bought part.
 - Wiring diagram.
+- Clawd variant (`cad/clawd/`, CC BY-NC 4.0): the same case internals in a body shaped like the
+  Claude Code mascot, with the port cluster on the back wall. Unofficial fan work.
+- `make_banner.ps1 -Target nod|clawd` renders the README images from the model.

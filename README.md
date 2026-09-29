@@ -73,7 +73,7 @@ Ready-to-print STLs are in `cad/stl/bevel/` (1 mm 45° edges) and `cad/stl/squar
 | `body.stl` | As exported: top face down. Designed to print without supports (not yet test-printed) |
 | `lid.stl` | Flat side down |
 | `plate.stl` | Flat. Print this first to test how your switches clip in |
-| `keycaps.stl` + `labels.stl` | Load together as one object for two-colour labels |
+| `keycaps.stl` | Top face down. Labels are engraved; to fill them in a second colour, load `labels.stl` with it as one object |
 
 The switch plate is a separate part so it prints perfectly flat; it drops into the key well and
 gets a dab of glue. Glue the magnets in pairs: stack each pair first and mark the touching faces,
@@ -92,8 +92,25 @@ After changing anything, run the collision check (Windows, needs OpenSCAD and `p
 powershell -File cad/check.ps1
 ```
 
-The README banner is rendered from the model too: `powershell -File docs/banner/make_banner.ps1`
-(also needs `pip install pillow` and Microsoft Edge).
+The README images are rendered from the model too: `powershell -File docs/banner/make_banner.ps1`
+(add `-Target clawd` for the Clawd image; also needs `pip install pillow` and Microsoft Edge).
+
+## Clawd variant
+
+![Clawd](cad/clawd/clawd.png)
+
+*Unofficial, noncommercial fan-made recreation of Clawd, the Claude Code mascot. Not affiliated with, authorized, or endorsed by Anthropic.*
+
+The same insides and keys in a Clawd-shaped body: [`cad/clawd/clawd.scad`](cad/clawd/clawd.scad)
+builds on `case.scad`. The USB port, LED window and power switch sit on the back wall, beside
+each other. STLs are in `cad/clawd/stl/`; the plate and keycaps are the same as Nod's.
+
+| File | Print orientation |
+|---|---|
+| `body.stl` + `eyes.stl` | As exported: top face down. Load together for black eyes. Supports under the arms |
+| `lid.stl` | Standing on its legs. Supports under the plate between the legs |
+
+The Clawd files are licensed **CC BY-NC 4.0** (noncommercial); see [`cad/clawd/LICENSE`](cad/clawd/LICENSE).
 
 ## Firmware
 
@@ -114,4 +131,5 @@ If upload can't find the board, hold **BOOT** while plugging it in, then upload 
 
 ## License
 
-[MIT](LICENSE)
+Nod (firmware, case, docs): [MIT](LICENSE).
+The Clawd variant in `cad/clawd/`: [CC BY-NC 4.0](cad/clawd/LICENSE), noncommercial use only.
