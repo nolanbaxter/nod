@@ -92,6 +92,9 @@ After changing anything, run the collision check (Windows, needs OpenSCAD and `p
 powershell -File cad/check.ps1
 ```
 
+The README banner is rendered from the model too: `powershell -File docs/banner/make_banner.ps1`
+(also needs `pip install pillow` and Microsoft Edge).
+
 ## Firmware
 
 [PlatformIO](https://platformio.org), Arduino framework, NimBLE.

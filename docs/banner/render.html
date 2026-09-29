@@ -1,0 +1,42 @@
+<!doctype html>
+<style>html,body{margin:0;background:#f8f8f8;overflow:hidden}</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+const W = 1400, H = 1100;
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(W, H);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xf8f8f8);
+scene.add(new THREE.HemisphereLight(0xffffff, 0xcfc8c0, 1.6));
+
+const gltf = await new GLTFLoader().loadAsync('banner.glb');
+const model = gltf.scene;
+model.traverse(o => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; o.material.roughness = 0.8; } });
+scene.add(model);
+const box = new THREE.Box3().setFromObject(model);
+const c = box.getCenter(new THREE.Vector3()), size = box.getSize(new THREE.Vector3()).length();
+
+// key light rakes across the key faces (+Z) from the upper left so the engravings cast shadows
+const sun = new THREE.DirectionalLight(0xffffff, 2.4);
+sun.position.copy(c).add(new THREE.Vector3(-1.0, 1.1, 0.55).multiplyScalar(size));
+sun.target.position.copy(c);
+sun.castShadow = true;
+sun.shadow.mapSize.set(4096, 4096);
+const sc = sun.shadow.camera; sc.left = sc.bottom = -size; sc.right = sc.top = size; sc.near = 0.001; sc.far = size * 4;
+sun.shadow.bias = -0.0002;
+scene.add(sun, sun.target);
+
+const cam = new THREE.PerspectiveCamera(26, W / H, 0.001, 10);
+cam.position.copy(c).add(new THREE.Vector3(100, 39, 124).normalize().multiplyScalar(size * 2.3));
+cam.lookAt(c);
+renderer.render(scene, cam);
+document.title = 'done';
+</script>
