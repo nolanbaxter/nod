@@ -1,11 +1,11 @@
-#include <Arduino.h>
+﻿#include <Arduino.h>
 #include <driver/rtc_io.h>
 #include <esp_sleep.h>
 #include "keys.h"
 
 // usb_out.cpp / ble_out.cpp
 void usbBegin(); bool usbUp(); void usbSend(uint8_t code);
-void bleBegin(); bool bleUp(); void bleSend(uint8_t code);
+void bleBegin(); bool bleUp(); void bleSend(uint8_t code); void blePair();
 
 // Switch leg -> GPIO, other leg -> GND. All RTC-capable so any key wakes from deep sleep; D2 (GPIO3, strapping) skipped.
 // Power is a slide switch in the battery lead.
@@ -15,10 +15,25 @@ constexpr uint8_t PIN[3] = {1, 2, 4};              // D0, D1, D3
 // the two: '1' is Yes in the terminal but the leftmost button, Deny, in the desktop app.)
 constexpr uint8_t CODE[3] = {0xB1, '2', 0xB0};     // 0xB1 = Esc, 0xB0 = Enter in both keyboard libraries
 constexpr int LED = 21;                            // XIAO user LED, active low
+// Battery sense: the XIAO can't read its battery by itself. Fit two equal resistors (100k-220k):
+// BAT+ -> R -> D4 -> R -> GND, then set this to 5 (D4 = GPIO5). -1 = not fitted, no low-battery warning.
+constexpr int BAT_PIN = -1;
+constexpr uint32_t BAT_LOW_MV = 3500;              // roughly the last 10-15% of a LiPo
+constexpr uint32_t PAIR_MAX_MS = 120000;           // pairing blink gives up after this
 
 Keys keys;
+Chord chord;
 Pending pending;
-uint32_t lastActive;
+uint32_t lastActive, flashAt, pairAt, batAt;
+uint8_t pairing;                                   // 0 off, 1 waiting for the old link to drop, 2 waiting for a new one
+bool batLow;
+
+bool readBatLow() {
+  if (BAT_PIN < 0) return false;
+  uint32_t mv = 0;
+  for (int i = 0; i < 16; i++) mv += analogReadMilliVolts(BAT_PIN);
+  return mv / 16 * 2 < BAT_LOW_MV;
+}
 
 uint8_t readKeys() {
   uint8_t m = 0;
@@ -68,13 +83,25 @@ void setup() {
 void loop() {
   uint32_t now = millis();
   uint8_t held = readKeys();
-  bool usb = usbUp(), linked = usb || bleUp();
+  bool usb = usbUp(), ble = bleUp(), linked = usb || ble;
 
-  uint8_t ev = keys.step(held, now) | pending.take(linked, now);
-  for (int i = 0; i < 3; i++) if (ev & (1 << i)) send(CODE[i]);
-  if (ev || usb) lastActive = now;
+  uint8_t ev = chord.step(keys.step(held, now), keys.down, now);
+  if (chord.chord) pending.keys = 0;                 // woke by a pairing hold: don't send the wake key
+  ev |= pending.take(linked, now);
+  for (int i = 0; i < 3; i++) if (ev & (1 << i)) { send(CODE[i]); flashAt = now; }
+  if (ev & PAIR) { blePair(); pairing = 1; pairAt = now; }
+  if (ev || held || usb) lastActive = now;
 
-  digitalWrite(LED, linked || now % 1000 >= 30);  // short blink every second = waiting for a connection
+  if (pairing == 1 && !ble) pairing = 2;
+  if ((pairing == 2 && ble) || now - pairAt > PAIR_MAX_MS) pairing = 0;
+  if (now - batAt >= 10000) { batAt = now; batLow = readBatLow(); }
+
+  bool on;
+  if (pairing) on = now % 200 < 100;                 // fast blink: pairing
+  else if (now - flashAt < 60) on = true;            // a key was just sent
+  else if (!linked) on = now % 1000 < 30;            // short blink every second: waiting for a connection
+  else on = batLow && now % 4000 < 30;               // short blink every 4 s: battery low
+  digitalWrite(LED, !on);
   if (shouldSleep(now, lastActive, usb, held)) sleepNow();
   delay(2);
 }

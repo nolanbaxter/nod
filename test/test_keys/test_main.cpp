@@ -1,4 +1,4 @@
-#include <initializer_list>
+﻿#include <initializer_list>
 #include <unity.h>
 #include "keys.h"
 
@@ -66,8 +66,42 @@ void sleeps_only_when_idle_on_battery_with_no_key_held() {
   TEST_ASSERT_TRUE(shouldSleep(IDLE_MS - 10, 0xFFFFFFF6u, false, 0));  // millis() wraparound
 }
 
+// Keys + Chord together, as main.cpp runs them.
+static Chord c;
+static uint8_t press(uint8_t mask, uint32_t ms) {
+  uint8_t out = 0;
+  for (uint32_t end = t + ms; t < end; t++) out |= c.step(k.step(mask, t), k.down, t);
+  return out;
+}
+
+void tap_sends_after_chord_window() {
+  c = Chord();
+  TEST_ASSERT_EQUAL(0, press(K2, CHORD_MS - 5));
+  TEST_ASSERT_EQUAL(K2, press(K2, 50));
+  TEST_ASSERT_EQUAL(K3, press(K3, 30) | press(0, 200));  // released before the window ends: still sent
+}
+
+void two_keys_together_send_nothing() {
+  c = Chord();
+  TEST_ASSERT_EQUAL(0, press(K3, 30));
+  TEST_ASSERT_EQUAL(0, press(K1 | K3, 1000));  // Enter pressed first, but never leaks
+  TEST_ASSERT_EQUAL(0, press(K1, 200) | press(0, 200));
+  TEST_ASSERT_EQUAL(K2, press(K2, 200));       // normal afterwards
+}
+
+void no_yes_held_three_seconds_pairs_once() {
+  c = Chord();
+  TEST_ASSERT_EQUAL(0, press(K1 | K3, PAIR_HOLD_MS - 50));
+  TEST_ASSERT_EQUAL(PAIR, press(K1 | K3, 2000));  // once, however long it's held
+  TEST_ASSERT_EQUAL(0, press(0, 100));
+  TEST_ASSERT_EQUAL(0, press(K1 | K2, 5000));     // other pairs don't pair
+}
+
 int main() {
   UNITY_BEGIN();
+  RUN_TEST(tap_sends_after_chord_window);
+  RUN_TEST(two_keys_together_send_nothing);
+  RUN_TEST(no_yes_held_three_seconds_pairs_once);
   RUN_TEST(wake_key_waits_for_link_then_sends_once);
   RUN_TEST(wake_key_dropped_if_link_too_slow);
   RUN_TEST(sleeps_only_when_idle_on_battery_with_no_key_held);

@@ -29,7 +29,7 @@ which is Confirm in the desktop app and No in the terminal. NO and YES behave th
 With no prompt open, the keys act like normal keys: `Esc` interrupts Claude, `2` types a 2,
 `Enter` sends whatever is in the message box.
 
-Every key fires on press, once. To remap, edit `CODE[]` in [`src/main.cpp`](src/main.cpp) and the
+Every key fires once, 80 ms after it's pressed (the wait tells a single press from the pairing hold). To remap, edit `CODE[]` in [`src/main.cpp`](src/main.cpp) and the
 `labels` in [`cad/case.scad`](cad/case.scad).
 
 ## How it behaves
@@ -39,7 +39,17 @@ Every key fires on press, once. To remap, edit `CODE[]` in [`src/main.cpp`](src/
 - **Sleep.** On battery, it deep-sleeps after 5 minutes without a press. Any key wakes it; that
   press is sent once Bluetooth reconnects (1–3 s), or dropped if that takes over 5 s, so a stale
   "Yes" never lands on a newer prompt.
-- **LED.** A short blink every second means it's waiting for a connection.
+- **Pairing.** It's discoverable as **Nod** whenever nothing is connected. To move it to another
+  computer, hold **NO + YES** together for 3 s: it forgets every paired computer and waits for a
+  new one. Remove Nod from the old computer's Bluetooth list too, or it keeps trying to reconnect.
+  (Keys pressed together never send, so this can't leak an Enter.)
+- **LED** (the programmable one, next to the USB port):
+  - quick flash: a key was sent
+  - fast blink: pairing
+  - short blink every second: waiting for a connection
+  - short blink every 4 s: battery low (needs two resistors; see `BAT_PIN` in `src/main.cpp`)
+- **Charging.** The XIAO's own red LED is on while the battery charges and goes out when it's full.
+  The power switch has to be on.
 - **Power switch** on the side cuts the battery. It has to be **on** for the battery to charge.
 
 ## Parts (one build)
