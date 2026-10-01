@@ -102,7 +102,7 @@ The README images are rendered from the model too: `powershell -File docs/banner
 *Unofficial, noncommercial fan-made recreation of Clawd, the Claude Code mascot. Not affiliated with, authorized, or endorsed by Anthropic.*
 
 The same insides and keys in a Clawd-shaped body: [`cad/clawd/clawd.scad`](cad/clawd/clawd.scad)
-builds on `case.scad`. The USB port, LED window and power switch sit on the back wall, beside
+builds on `case.scad`. The USB port, LED holes and power switch sit on the back wall, beside
 each other. STLs are in `cad/clawd/stl/`; the plate and keycaps are the same as Nod's.
 
 | File | Print orientation |

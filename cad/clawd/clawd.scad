@@ -20,7 +20,7 @@ sink = max(2*chamfer, 0.5);   // arms/legs overlap the body so their bevels are 
 
 module eyes() for (c = [2, 10]) box([-W/2 + c*px_w, -0.01, 2*px_h], [px_w, eye_d + 0.01, px_h]);
 module body_add() for (s = [-1, 1]) cbox([s > 0 ? W/2 - sink : -W/2 - 2*px_w, 0, px_h], [2*px_w + sink, depth, px_h]);
-// "Nod" engraved on the back wall above the power switch (above the port is the thin LED window).
+// "Nod" engraved on the back wall above the power switch (the space above the port is kept clear).
 // rotate: text stands up on the back face and reads correctly from behind; it cuts label_depth in.
 module back_logo() translate([sw_lx, depth - label_depth, sw_z + sw_pocket.y/2 + 2.5]) rotate([90, 0, 180])
   linear_extrude(label_depth + 0.01) text("Nod", size = logo_size, halign = "center", valign = "center", font = label_font);

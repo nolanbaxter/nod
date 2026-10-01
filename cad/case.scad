@@ -94,13 +94,18 @@ mag_z = max(lid_t, mag_h + 0.6);              // where magnet faces meet
 boss_top = mag_z + mag_h + 0.6 + boss_d/2;    // tip of the 45° cone above each body boss
 mag_xy = [for (sx = [-1, 1], y = [wall + mag_off, depth - wall - mag_off])
           [sx * (W/2 - wall - mag_off), y]];
-led_z0 = port_z + plug_h/2 + 0.5;             // LED window starts above the plug recess, never through it
+led_z0 = port_z + plug_h/2 + 0.5;             // clear band above the plug recess (Nod's switch and the antenna sit above it)
 led_top = led_z0 + 1.5;
+// The XIAO's two LEDs sit either side of the USB-C, ~40% of the way from the port edge to the board edge
+// (measured on the real board). Their holes go just outside the plug recess so a plugged-in cable
+// doesn't cover the charge LED.
+led_hole = [1.6, 2.4];                         // width, height; bottom at the board's top face
+led_hole_x = plug_w/2 + 0.6 + led_hole.x/2;    // centre, either side of the port
 well = [2*pitch + cap + 2*well_gap, cap + 2*well_gap];   // key well footprint, centered on the top
 plate_top = H - (cap_rest + cap_h - cap_proud);          // switch plate sits at the bottom of the well
 ceil_z = plate_top - plate - rim;                        // underside of the solid top block
 
-// Port cluster (USB, LED window, power switch, XIAO pocket), modelled in a local frame:
+// Port cluster (USB, LED holes, power switch, XIAO pocket), modelled in a local frame:
 // x along the wall, y = 0 at its outer face and negative going inside.
 // Nod: right side wall, switch above the port (that wall is too short for both side by side).
 xl0 = -wall - xiao_l;                          // PCB inner edge; the USB edge butts the wall
@@ -121,7 +126,7 @@ module lid_add() {}
 module preview_add() {}
 
 assert(port_z - plug_h/2 > lid_t, "cable overmold would hit the lid; raise xiao_lift");
-assert(ant_z > led_top && ant_z + ant_w + 1 < ceil_z, "antenna overlaps LED window or the top block; move ant_z");
+assert(ant_z > led_top && ant_z + ant_w + 1 < ceil_z, "antenna overlaps the band above the port or the top block; move ant_z");
 assert(well.x + 2 < W, "key well too wide for the body");
 assert(ant_l + 1 < cav.x && (ant_z > boss_top || ant_l/2 + 0.5 < cav.x/2 - mag_off - boss_d/2),
        "antenna runs into a corner magnet boss");
@@ -183,8 +188,8 @@ module body() difference() {
     box([sw_lx - (knob_l + knob_travel)/2 - tol, -wall - 1, sw_z - knob_w/2 - tol],
         [knob_l + knob_travel + 2*tol, wall + 2, knob_w + 2*tol]);
     box([sw_lx - sw_pocket.x/2, -wall + sw_pocket_wall, sw_z - sw_pocket.y/2], [sw_pocket.x, wall, sw_pocket.y]);
-    // LED window: wall thinned to 0.6 just above the plug recess
-    box([-6, -wall - 0.01, led_z0], [12, wall - 0.6, led_top - led_z0]);
+    // LED holes, through the wall beside the plug recess, starting at the board's top face
+    for (s = [-1, 1]) box([s*led_hole_x - led_hole.x/2, -wall - 1, lid_t + xiao_lift + pcb_t], [led_hole.x, wall + 2, led_hole.y]);
   }
 }
 

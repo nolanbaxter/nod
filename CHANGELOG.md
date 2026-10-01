@@ -10,7 +10,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning: [S
   attached, Bluetooth LE keyboard otherwise, deep sleep after 5 minutes idle on battery, wake key
   delivered once Bluetooth reconnects. Unit tests for the key, wake, and sleep logic.
 - Parametric OpenSCAD case with a key well, separate switch plate, magnet-held lid, side USB-C
-  port, power switch (SS12D00-G3, in a finger pocket), and LED window; bevelled and square STLs; a collision check against
+  port, power switch (SS12D00-G3, in a finger pocket), and LED holes beside the port; bevelled and square STLs; a collision check against
   stand-ins for every bought part.
 - Wiring diagram.
 - Clawd variant (`cad/clawd/`, CC BY-NC 4.0): the same case internals in a body shaped like the

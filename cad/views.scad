@@ -3,7 +3,7 @@ include <case.scad>
 part = "none";
 view = "port";
 
-if (view == "port") {  // right side: USB port, LED window, power switch
+if (view == "port") {  // right side: USB port, LED holes, power switch
   color("#DA7756") body();
   color("#C86A4C") lid();
   xiao_dummy();
