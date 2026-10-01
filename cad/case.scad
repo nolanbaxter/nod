@@ -201,13 +201,17 @@ module lid() difference() {
     at_port() {
       // tab filling the USB notch under the receptacle
       box([-usb_w/2, -wall, lid_t - 0.01], [usb_w, wall, port_z - usb_h/2 - tol - lid_t]);
-      // XIAO pocket: side rails, two ledges, inner stop (takes plug-in force)
-      rail_h = xiao_lift + pcb_t + 1.5;
-      for (s = [-1, 1]) box([s > 0 ? xiao_w/2 + tol : -xiao_w/2 - tol - 1.2, xl0 - 1.5, lid_t - 0.01],
-                            [1.2, -wall - tol - xl0 + 1.5, rail_h]);
+      // XIAO pocket: short side guides at each end, two ledges, inner stop (takes plug-in force).
+      // The guides stop at the board's top face and leave the middle of each side open, so the
+      // battery wires (BAT+/BAT- pads underneath) can leave under the board edge and the antenna
+      // cable can leave the U.FL plug sideways.
+      rail_h = xiao_lift + pcb_t;
+      guide = 4;
+      for (s = [-1, 1], y0 = [xl0 - 1.5, -wall - tol - guide])
+        box([s > 0 ? xiao_w/2 + tol : -xiao_w/2 - tol - 1.2, y0, lid_t - 0.01], [1.2, guide + (y0 < xl0 ? 1.5 : 0), rail_h]);
       box([-xiao_w/2, xl0, lid_t - 0.01], [xiao_w, 2, xiao_lift]);
       box([-xiao_w/2, -wall - tol - 2, lid_t - 0.01], [xiao_w, 2, xiao_lift]);
-      box([-xiao_w/2 - tol, xl0 - tol - 1.5, lid_t - 0.01], [xiao_w + 2*tol, 1.5, xiao_lift + pcb_t + 2]);
+      box([-xiao_w/2 - tol, xl0 - tol - 1.5, lid_t - 0.01], [xiao_w + 2*tol, 1.5, xiao_lift + pcb_t + 0.5]);
     }
     // battery stands on its long edge against the front wall, held by this rib
     box([-bat_l/2 - 2, wall + bat_t + bat_slack, lid_t - 0.01], [bat_l + 4, 1.2, 10]);
