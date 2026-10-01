@@ -201,16 +201,18 @@ module lid() difference() {
     at_port() {
       // tab filling the USB notch under the receptacle
       box([-usb_w/2, -wall, lid_t - 0.01], [usb_w, wall, port_z - usb_h/2 - tol - lid_t]);
-      // XIAO pocket: short side guides at each end, two ledges, inner stop (takes plug-in force).
-      // The guides stop at the board's top face and leave the middle of each side open, so the
-      // battery wires (BAT+/BAT- pads underneath) can leave under the board edge and the antenna
-      // cable can leave the U.FL plug sideways.
-      rail_h = xiao_lift + pcb_t;
-      guide = 4;
-      for (s = [-1, 1], y0 = [xl0 - 1.5, -wall - tol - guide])
-        box([s > 0 ? xiao_w/2 + tol : -xiao_w/2 - tol - 1.2, y0, lid_t - 0.01], [1.2, guide + (y0 < xl0 ? 1.5 : 0), rail_h]);
-      box([-xiao_w/2, xl0, lid_t - 0.01], [xiao_w, 2, xiao_lift]);
-      box([-xiao_w/2, -wall - tol - 2, lid_t - 0.01], [xiao_w, 2, xiao_lift]);
+      // XIAO pocket: side guides at the inner end only, two ledges, inner stop (takes plug-in force).
+      // The USB end is centred by the receptacle in its wall notch, so it needs no guides; that keeps
+      // the solder on the edge pads there (D0, 5V, GND) clear. Guides stop at the board's top face and
+      // the sides stay open, so battery wires (BAT+/BAT- underneath) leave under the board edge and the
+      // antenna cable leaves the U.FL plug in any direction. The ledges stop short of the edge pads
+      // so solder that wicks underneath can't rock the board.
+      guide = 5.5;
+      for (s = [-1, 1]) box([s > 0 ? xiao_w/2 + tol : -xiao_w/2 - tol - 1.2, xl0 - 1.5, lid_t - 0.01],
+                            [1.2, guide, xiao_lift + pcb_t]);
+      ledge_w = xiao_w - 2*2.5;
+      box([-ledge_w/2, xl0, lid_t - 0.01], [ledge_w, 2, xiao_lift]);
+      box([-ledge_w/2, -wall - tol - 2, lid_t - 0.01], [ledge_w, 2, xiao_lift]);
       box([-xiao_w/2 - tol, xl0 - tol - 1.5, lid_t - 0.01], [xiao_w + 2*tol, 1.5, xiao_lift + pcb_t + 0.5]);
     }
     // battery stands on its long edge against the front wall, held by this rib
