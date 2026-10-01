@@ -1,2 +1,5 @@
 .pio/
 .vscode/
+
+# slicer projects
+*.3mf
