@@ -5,9 +5,9 @@ Built for [Claude Code](https://docs.anthropic.com/en/docs/claude-code)'s number
 the keys are one line to remap. Works over USB-C or Bluetooth, runs on a small LiPo, and sleeps
 when you're not using it.
 
-> **Status:** designed and compiled, not yet built. The firmware builds and its logic is unit
-> tested; the case passes a collision check against stand-ins for every part. Values marked
-> `measure` in `cad/case.scad` are from datasheets and listings and get tuned on the first build.
+> **Status:** built and working. The first one is the [Clawd variant](#clawd-variant), tested on
+> real hardware over USB and Bluetooth in both the desktop app and the terminal. The plain Nod
+> box shares its plate, keycaps and insides, but its current body and lid haven't been printed yet.
 
 Not affiliated with or endorsed by Anthropic.
 
