@@ -24,4 +24,7 @@ void usbBegin() {
   USB.begin();
 }
 bool usbUp() { return mounted && !suspended; }
-void usbSend(uint8_t code) { kb.write(code); }
+void usbSend(const uint8_t *keys, int n) {  // pressed together, then released: one shortcut
+  for (int i = 0; i < n; i++) kb.press(keys[i]);
+  kb.releaseAll();
+}

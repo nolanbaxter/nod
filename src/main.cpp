@@ -4,16 +4,16 @@
 #include "keys.h"
 
 // usb_out.cpp / ble_out.cpp
-void usbBegin(); bool usbUp(); void usbSend(uint8_t code);
-void bleBegin(); bool bleUp(); void bleSend(uint8_t code); void blePair();
+void usbBegin(); bool usbUp(); void usbSend(const uint8_t *keys, int n);
+void bleBegin(); bool bleUp(); void bleSend(const uint8_t *keys, int n); void blePair();
 
 // Switch leg -> GPIO, other leg -> GND. All RTC-capable so any key wakes from deep sleep; D2 (GPIO3, strapping) skipped.
 // Power is a slide switch in the battery lead.
 constexpr uint8_t PIN[3] = {1, 2, 4};              // D0, D1, D3
-// Left to right: No = Esc, Always = '2', Yes = Enter. Tested in the Claude desktop app and matches the
-// terminal CLI, so one keymap works in both. (Number keys pick by position and the order differs between
-// the two: '1' is Yes in the terminal but the leftmost button, Deny, in the desktop app.)
-constexpr uint8_t CODE[3] = {0xB1, '2', 0xB0};     // 0xB1 = Esc, 0xB0 = Enter in both keyboard libraries
+// Left to right: No = Esc, Always = Ctrl+Shift+Enter, Yes = Ctrl+Enter: the shortcuts the Claude desktop app
+// shows on its prompt buttons. Each row is pressed together; 0 = unused. Key codes are the same in both
+// keyboard libraries: 0x80 Ctrl, 0x81 Shift, 0xB0 Enter, 0xB1 Esc.
+constexpr uint8_t CODE[3][3] = {{0xB1}, {0x80, 0x81, 0xB0}, {0x80, 0xB0}};
 constexpr int LED = 21;                            // XIAO user LED, active low
 // Battery sense: the XIAO can't read its battery by itself. Fit two equal resistors (100k-220k):
 // BAT+ -> R -> D4 -> R -> GND, then set this to 5 (D4 = GPIO5). -1 = not fitted, no low-battery warning.
@@ -42,9 +42,11 @@ uint8_t readKeys() {
 }
 
 // USB when a computer is on the cable, otherwise Bluetooth. Dropped if neither is connected.
-void send(uint8_t code) {
-  if (usbUp()) usbSend(code);
-  else if (bleUp()) bleSend(code);
+void send(const uint8_t *code) {
+  int n = 0;
+  while (n < 3 && code[n]) n++;
+  if (usbUp()) usbSend(code, n);
+  else if (bleUp()) bleSend(code, n);
 }
 
 void sleepNow() {

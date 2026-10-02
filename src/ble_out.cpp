@@ -10,7 +10,10 @@ static BleKeyboard kb(DEVICE_NAME, "DIY", 100);  // no battery sensing, so it al
 
 void bleBegin() { kb.begin(); }
 bool bleUp() { return kb.isConnected(); }
-void bleSend(uint8_t code) { kb.write(code); }
+void bleSend(const uint8_t *keys, int n) {
+  for (int i = 0; i < n; i++) kb.press(keys[i]);
+  kb.releaseAll();
+}
 
 // Forget every paired computer and drop the current one, so a new computer can pair.
 // Advertising restarts by itself on disconnect (BleKeyboard::onDisconnect).
