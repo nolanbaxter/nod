@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <stdint.h>
 
 // Pure logic (no Arduino) so it runs in the native test.
@@ -27,25 +27,28 @@ struct Keys {
 };
 
 constexpr uint32_t CHORD_MS = 80;             // a press waits this long in case a second key joins it
-constexpr uint32_t PAIR_HOLD_MS = 3000;       // NO + YES held this long = Bluetooth pairing
-constexpr uint8_t PAIR = 0x80;                // bit in Chord::step's result
+constexpr uint32_t HOLD_MS = 3000;            // two-key holds: NO + YES = Bluetooth pairing, NO + ALWAYS = keymap
+constexpr uint8_t PAIR = 0x80, MODE = 0x40;   // bits in Chord::step's result
 
 // Sits after Keys: input is Keys' newly-pressed bits and its debounced held mask. Holds each press for
 // CHORD_MS, so two keys pressed together send nothing (pairing must never leak an Enter or a '2').
-// Output: keys to send, plus PAIR once NO + YES have been held PAIR_HOLD_MS.
+// Output: keys to send, plus PAIR / MODE once NO + YES / NO + ALWAYS have been held HOLD_MS.
 struct Chord {
   uint8_t wait = 0;
   uint32_t at = 0, chordAt = 0;
-  bool chord = false, paired = false;
+  bool chord = false, fired = false;
 
   uint8_t step(uint8_t pressed, uint8_t down, uint32_t now) {
     if (down & (down - 1)) {               // two or more held: a chord, never sends keys
       if (!chord) { chord = true; chordAt = now; wait = 0; }
-      if (down == (K1 | K3) && !paired && now - chordAt >= PAIR_HOLD_MS) { paired = true; return PAIR; }
+      if (fired || now - chordAt < HOLD_MS) return 0;
+      fired = true;
+      if (down == (K1 | K3)) return PAIR;
+      if (down == (K1 | K2)) return MODE;
       return 0;
     }
     if (chord) {                           // stays a chord until every key is up
-      if (!down) chord = paired = false;
+      if (!down) chord = fired = false;
       return 0;
     }
     if (pressed) { if (!wait) at = now; wait |= pressed; }

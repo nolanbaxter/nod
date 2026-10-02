@@ -27,9 +27,20 @@ Some prompts (multi-step or piped commands) have only Deny and Allow once. There
 nothing and YES allows once. Text you've typed in the message box isn't sent when YES approves a
 prompt.
 
-Not tested in the terminal CLI, whose documented keys are `Enter` (yes) and `Esc` (no).
+### Terminal keymap
 
-Every key fires once, 80 ms after it's pressed (the wait tells a single press from the pairing hold). To remap, edit `CODE[]` in [`src/main.cpp`](src/main.cpp) and the
+Claude Code in a terminal numbers its options instead: 1 Yes, 2 don't ask again, 3 No (Yes/No
+prompts have only 1 and 2). **Hold NO + ALWAYS for 3 s** to switch between the desktop and
+terminal keymaps. The LED gives one long blink for desktop, two for terminal, and Nod remembers the
+choice through sleep and power-off.
+
+| Key | Sends | 3-option prompt | Yes/No prompt |
+|---|---|---|---|
+| NO | `Esc` | No | No |
+| ALWAYS | `2` | Yes, don't ask again | No |
+| YES | `1` | Yes | Yes |
+
+Every key fires once, 80 ms after it's pressed (the wait tells a single press from a two-key hold). To remap, edit `CODE` (both keymaps) in [`src/main.cpp`](src/main.cpp) and the
 `labels` in [`cad/case.scad`](cad/case.scad).
 
 ## How it behaves

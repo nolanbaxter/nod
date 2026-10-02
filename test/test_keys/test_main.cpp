@@ -91,10 +91,11 @@ void two_keys_together_send_nothing() {
 
 void no_yes_held_three_seconds_pairs_once() {
   c = Chord();
-  TEST_ASSERT_EQUAL(0, press(K1 | K3, PAIR_HOLD_MS - 50));
+  TEST_ASSERT_EQUAL(0, press(K1 | K3, HOLD_MS - 50));
   TEST_ASSERT_EQUAL(PAIR, press(K1 | K3, 2000));  // once, however long it's held
   TEST_ASSERT_EQUAL(0, press(0, 100));
-  TEST_ASSERT_EQUAL(0, press(K1 | K2, 5000));     // other pairs don't pair
+  TEST_ASSERT_EQUAL(MODE, press(K1 | K2, 5000));  // NO + ALWAYS: keymap toggle instead
+  TEST_ASSERT_EQUAL(0, press(0, 100) | press(K2 | K3, 5000));  // ALWAYS + YES: nothing
 }
 
 int main() {
