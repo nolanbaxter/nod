@@ -47,7 +47,7 @@ Every key fires once, 80 ms after it's pressed (the wait tells a single press fr
 
 - **USB or Bluetooth, automatically.** Plugged into a computer, it's a USB keyboard. Unplugged,
   or on a charger, it's a Bluetooth keyboard named **Nod**. Each press goes out one way only.
-- **Sleep.** On battery, it deep-sleeps after 5 minutes without a press. Any key wakes it; that
+- **Sleep.** On battery, it deep-sleeps after 2 minutes without a press. Any key wakes it; that
   press is sent once Bluetooth reconnects (1â€“3 s), or dropped if that takes over 5 s, so a stale
   "Yes" never lands on a newer prompt.
 - **Pairing.** It's discoverable as **Nod** whenever nothing is connected. To move it to another

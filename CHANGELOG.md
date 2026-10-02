@@ -7,7 +7,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning: [S
 
 ### Added
 - Firmware for the Seeed XIAO ESP32-S3: three keys with two keymaps, switched by holding NO + ALWAYS: the Claude desktop app's prompt shortcuts (Esc / Ctrl+Shift+Enter / Ctrl+Enter) and the terminal's (Esc / 2 / 1), USB keyboard when a computer is
-  attached, Bluetooth LE keyboard otherwise, deep sleep after 5 minutes idle on battery, wake key
+  attached, Bluetooth LE keyboard otherwise, deep sleep after 2 minutes idle on battery, wake key
   delivered once Bluetooth reconnects. Unit tests for the key, wake, and sleep logic.
 - Parametric OpenSCAD case with a key well, separate switch plate, magnet-held lid, side USB-C
   port, power switch (SS12D00-G3, in a finger pocket), and LED holes beside the port; bevelled and square STLs; a collision check against

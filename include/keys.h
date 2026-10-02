@@ -4,7 +4,7 @@
 // Pure logic (no Arduino) so it runs in the native test.
 
 constexpr uint32_t DEBOUNCE_MS = 10;          // tune if switches chatter
-constexpr uint32_t IDLE_MS = 5 * 60 * 1000;   // on battery: deep sleep after this long without a press
+constexpr uint32_t IDLE_MS = 2 * 60 * 1000;   // on battery: deep sleep after this long without a press
 constexpr uint32_t WAKE_SEND_MS = 5000;       // how long a wake press waits for BLE to reconnect
 
 enum : uint8_t { K1 = 1, K2 = 2, K3 = 4 };
